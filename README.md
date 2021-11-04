@@ -1,2 +1,45 @@
 # openstack-image-fixes
 OpenStack TripleO Image fixes
+
+How to apply fixes and monitoring scripts to RHOSP 16:
+
+1. Clone this repository by:
+git clone https://github.com/hpcugent/openstack-image-fixes /home/stack/fixes
+
+2. If not created yet please create application credential for endpoints checks and functional tests:
+
+copy collectd/configrc-example into colectd/configrc and change following values accordingly:
+  OS_APPLICATION_CREDENTIAL_ID
+  OS_APPLICATION_CREDENTIAL_SECRET
+  OS_PROJECT_ID
+
+3. Edit rest of the configrc values, HEAT_JSON variable described in next step:
+  KEYSTONE_ENDPOINT
+  HOSTNAME_TO_RUN
+  ALL_ENDPOINTS
+  HEAT_ENDPOINT
+
+4. For collectd functional tests alter collectd/heat-template.yaml and change following default parameters:
+
+  vm_flavour:
+    default: CPUv1.tiny
+  vm_image:
+    default: CentOS-8
+  user_network:
+    default: demo_vm
+  nfs_network:
+    default: demo_nfs
+  floating_ip_id:
+    default: dbf39835-41d9-4201-a7bc-b34b7ef32ee6
+  floating_ip:
+    default: 172.18.245.134
+
+Run "openstack -vvvvv stack create --dry-run --timeout 30 --enable-rollback  -t heat-template.yaml TESTSTACK --fit" and change value of HEAT_JSON variable in collectd/configrc file.
+Within openstack client output look for dry-run request "REQ:" and "preview" within URI. Copy JSON after "-d" parameter.
+Make sure stack can be built, you can run the command without "--dry-run" parameter.
+
+5. Redeploy RHOSP 16
+
+6. Verify that you can see new metrics in prometheus (STF), look for "collectd_endpoints_commands_total" and "collectd_heat_commands_total":
+
+Value different than 0 means there is an issue with endpoint/functional tests
