@@ -1,0 +1,31 @@
+--- events.py.orig	2021-01-18 13:07:19.121372854 +0100
++++ events.py	2021-01-18 13:32:34.485820880 +0100
+@@ -178,14 +178,14 @@
+                                     "op": "eq"})
+         filters['t_filter'].append({"key": "user_id", "string": user_id,
+                                     "op": "eq"})
+-    elif not user_id and not proj_id:
++    elif not user_id and not proj_id and (pecan.request.headers.get('X-Is-Admin-Project', "False") == "False"):
+         filters['admin_proj'] = pecan.request.headers.get('X-Project-Id')
+     return filters
+ 
+ 
+ def _event_query_to_event_filter(q):
+     evt_model_filter = {
+-        'event_type': None,
++        'event_type': [],
+         'message_id': None,
+         'start_timestamp': None,
+         'end_timestamp': None
+@@ -221,7 +221,10 @@
+                            ' %(field)s') %
+                          {'operator': i.op, 'field': i.field})
+                 raise base.ClientSideError(error)
+-            evt_model_filter[i.field] = i.value
++            if i.field == 'event_type':
++                evt_model_filter[i.field].append(i.value)
++            else:
++                evt_model_filter[i.field] = i.value
+         elif i.field == 'all_tenants' and admin_proj:
+             all_tenants = strutils.bool_from_string(i.value)
+             if all_tenants:

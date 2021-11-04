@@ -1,0 +1,24 @@
+--- impl_sqlalchemy.py.orig	2021-01-18 13:07:09.735990998 +0100
++++ impl_sqlalchemy.py	2021-01-18 13:29:37.550653365 +0100
+@@ -257,12 +257,17 @@
+             event_join_conditions = [models.EventType.id ==
+                                      models.Event.event_type_id]
+ 
+-            if event_filter.event_type:
+-                event_join_conditions.append(models.EventType.desc ==
+-                                             event_filter.event_type)
+-
+             # Build up the where conditions
+             event_filter_conditions = []
++
++            if event_filter.event_type:
++                for event_type in event_filter.event_type:
++                    if event_type[0]=='!':
++                        event_filter_conditions.append(models.EventType.desc !=
++                                                       event_type[1:])
++                    else:
++                        event_join_conditions.append(models.EventType.desc ==
++                                                     event_type)
+             if event_filter.message_id:
+                 event_filter_conditions.append(
+                     models.Event.message_id == event_filter.message_id)
