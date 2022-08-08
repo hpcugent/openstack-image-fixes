@@ -14,7 +14,7 @@ parameters:
     label: vm_image
     description: Required VM image
     constraints: [ custom_constraint: glance.image ]
-    default: CentOS-8
+    default: CentOS-8-stream
   user_network:
     type: string
     label: user_network
