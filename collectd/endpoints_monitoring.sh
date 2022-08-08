@@ -50,5 +50,5 @@ do
                 #--write-out "%{http_code} %{remote_ip}:%{remote_port} %{time_total} seconds\n" \
         retcode=$?
 #       echo $retcode $endpoint
-        echo "PUTVAL `hostname`/endpoints/commands-port_$endpoint interval=60 N:$retcode"
+        echo "PUTVAL `hostname`/endpoints/commands-port_$endpoint interval=900 N:$retcode"
 done
