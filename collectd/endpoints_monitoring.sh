@@ -17,7 +17,7 @@ hostname|grep "$HOSTNAME_TO_RUN" &>/dev/null || exit 1
 
 
 #get token
-OS_TOKEN=`curl -s --fail -i -D - --max-time 10 -o /dev/null \
+OS_TOKEN=$(curl -s --fail -i -D - --max-time 10 -o /dev/null \
   -H "Content-Type: application/json" \
   -d "
 {
@@ -33,22 +33,24 @@ OS_TOKEN=`curl -s --fail -i -D - --max-time 10 -o /dev/null \
         }
     }
 }" \
- $KEYSTONE_ENDPOINT/auth/tokens 2>&1|grep X-Subject-Token`
-[ $? -ne 0 ] && echo "Unable to get token from keystone." 1>&2
+ "$KEYSTONE_ENDPOINT/auth/tokens" 2>&1|grep X-Subject-Token)
+ retcode="$?"
+[ $retcode -ne 0 ] && echo "Unable to get token from keystone." 1>&2
 
-export OS_TOKEN="$(echo $OS_TOKEN |awk '{print $2}'|sed 's/\r$//')"
+OS_TOKEN="$(echo "$OS_TOKEN" |awk '{print $2}'|sed 's/\r$//')"
+export OS_TOKEN
 
 #check endpoints by curl
 for i in $ALL_ENDPOINTS
 do
-        endpoint="`curl -g -q -s --fail -o /dev/null \
-                -H \"X-Auth-Token: $OS_TOKEN\" \
+        endpoint="$(curl -g -q -s --fail -o /dev/null \
+                -H "X-Auth-Token: $OS_TOKEN" \
                 --max-time 10 \
-                --user-agent \"curl-healthcheck\" \
-                --write-out \"%{remote_port}\n\" \
-                $i`"
+                --user-agent "curl-healthcheck" \
+                --write-out "%{remote_port}\n" \
+                "$i")"
                 #--write-out "%{http_code} %{remote_ip}:%{remote_port} %{time_total} seconds\n" \
         retcode=$?
 #       echo $retcode $endpoint
-        echo "PUTVAL `hostname`/endpoints/commands-port_$endpoint interval=900 N:$retcode"
+        echo "PUTVAL $(hostname)/endpoints/commands-port_$endpoint interval=900 N:$retcode"
 done
