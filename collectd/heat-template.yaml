@@ -72,9 +72,11 @@ resources:
             #!/bin/bash
             SHARE="$(echo \"_NFS_SHARE_\"|cut -c3-|head -c-3)"
             mount -t nfs4 $SHARE /mnt
-            [ $? -eq 0 ] && wc_notify --data-binary "{\"status\": \"SUCCESS\", \"reason\": \"Mount $SHARE to /mnt successful.\"}" || wc_notify --data-binary "{\"status\": \"FAILURE\", \"reason\": \"Mount $SHARE to /mnt not successful.\"}"
+            [ $? -eq 0 ] && wc_notify --data-binary "{\"status\": \"SUCCESS\", \"reason\": \"Mount $SHARE to /mnt successful.\"}" || \
+                            wc_notify --data-binary "{\"status\": \"FAILURE\", \"reason\": \"Mount $SHARE to /mnt not successful.\"}"
             ping _FLOATING_IP_ -c3 -q &>/dev/null
-            [ $? -eq 0 ] && wc_notify --data-binary "{\"status\": \"SUCCESS\", \"reason\": \"Ping to _FLOATING_IP_ successful.\"}" || wc_notify --data-binary "{\"status\": \"FAILURE\", \"reason\": \"Ping to _FLOATING_IP_ not successful.\"}"
+            [ $? -eq 0 ] && wc_notify --data-binary "{\"status\": \"SUCCESS\", \"reason\": \"Ping to _FLOATING_IP_ successful.\"}" || \
+                            wc_notify --data-binary "{\"status\": \"FAILURE\", \"reason\": \"Ping to _FLOATING_IP_ not successful.\"}"
           params:
             wc_notify: { get_attr: [wait_handle, curl_cli] }
             _FLOATING_IP_: {get_param: floating_ip}
