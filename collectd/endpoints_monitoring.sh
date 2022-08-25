@@ -34,6 +34,7 @@ OS_TOKEN=$(curl -s --fail -i -D - --max-time 10 -o /dev/null \
  "$KEYSTONE_ENDPOINT/auth/tokens" 2>&1|grep X-Subject-Token)
  retcode="$?"
 [ $retcode -ne 0 ] && echo "Unable to get token from keystone." 1>&2
+echo "PUTVAL $(hostname)/endpoints/commands-fetch_token interval=900 N:$retcode"
 
 OS_TOKEN="$(echo "$OS_TOKEN" |awk '{print $2}'|sed 's/\r$//')"
 export OS_TOKEN
