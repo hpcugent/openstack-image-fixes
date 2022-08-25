@@ -21,7 +21,7 @@ hostname|grep "$HOSTNAME_TO_RUN" &>/dev/null || exit 1
 #define stackname
 stackname="teststack-$(hostname)"
 
-HEAT_JSON="$(echo "$HEAT_JSON"|sed s/TESTSTACK/"$stackname"/g)"
+HEAT_JSON="${HEAT_JSON//TESTSTACK/$stackname}"
 
 #get token
 OS_TOKEN=$(curl -s --fail -i -D - --max-time 10 -o /dev/null \
