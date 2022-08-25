@@ -1,4 +1,4 @@
-FROM satellite.ugent.be:5000/hpc-ugent-testing-tier1_osp16-osp16_containers-panko-api:16.1
+FROM satellite.ugent.be:5000/hpc-ugent-testing-tier1_osp16-osp16_containers-panko-api:16.2
 USER "root"
 # Copy required files and patch package
 COPY panko_api_controllers_v2_events.py.xdmod.patch /tmp/
