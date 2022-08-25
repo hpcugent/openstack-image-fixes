@@ -63,7 +63,7 @@ for a in data['token']['catalog']:
       print(b['url'])")"
 
 #modify endpoints for curl query
-ALL_ENDPOINTS="$(echo $ALL_ENDPOINTS|tr " " "\n"|\
+ALL_ENDPOINTS="$(echo "$ALL_ENDPOINTS"|tr " " "\n"|\
                 sed 's/:13005\/.*/:13005\//g'|\
                 sed 's/:13004\/.*/:13004\//g'|\
                 sed 's/:13776\/v2\/.*/:13776\/v2\//g'|\
