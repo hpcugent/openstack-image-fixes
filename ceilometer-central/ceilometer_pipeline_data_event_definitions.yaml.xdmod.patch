@@ -1,0 +1,14 @@
+--- event_definitions.yaml.orig	2021-01-18 11:51:50.223805168 +0100
++++ event_definitions.yaml	2021-01-18 11:54:24.733082939 +0100
+@@ -69,6 +69,11 @@
+     audit_period_ending:
+       type: datetime
+       fields: payload.audit_period_ending
++- event_type: ['compute.instance.volume.attach', 'compute.instance.volume.detach']
++  traits:
++    <<: *instance_traits
++    volume_id:
++      fields: payload.volume_id
+ - event_type: ['volume.exists', 'volume.retype', 'volume.create.*', 'volume.delete.*', 'volume.resize.*', 'volume.attach.*', 'volume.detach.*', 'volume.update.*', 'snapshot.exists', 'snapshot.create.*', 'snapshot.delete.*', 'snapshot.update.*']
+   traits: &cinder_traits
+     user_id:
