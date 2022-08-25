@@ -10,11 +10,9 @@ source $rcfile
 [ -z ${OS_APPLICATION_CREDENTIAL_ID+x} ] && echo "Variable OS_APPLICATION_CREDENTIAL_ID is unset." 1>&2 && exit 1
 [ -z ${OS_APPLICATION_CREDENTIAL_SECRET+x} ] && echo "Variable OS_APPLICATION_CREDENTIAL_SECRET is unset." 1>&2 && exit 1
 [ -z ${KEYSTONE_ENDPOINT+x} ] && echo "Variable KEYSTONE_ENDPOINT is unset." 1>&2 && exit 1
-[ -z ${ALL_ENDPOINTS+x} ] && echo "Variable ALL_ENDPOINTS is unset." 1>&2 && exit 1
 
 #if not running from correct host exit the script
 hostname|grep "$HOSTNAME_TO_RUN" &>/dev/null || exit 1
-
 
 #get token
 OS_TOKEN=$(curl -s --fail -i -D - --max-time 10 -o /dev/null \
@@ -39,6 +37,38 @@ OS_TOKEN=$(curl -s --fail -i -D - --max-time 10 -o /dev/null \
 
 OS_TOKEN="$(echo "$OS_TOKEN" |awk '{print $2}'|sed 's/\r$//')"
 export OS_TOKEN
+
+ALL_ENDPOINTS="$(curl --fail -L -g -q -s --max-time 10 \
+  -H "Content-Type: application/json" \
+  -d "
+{
+    \"auth\": {
+        \"identity\": {
+            \"methods\": [
+                \"application_credential\"
+            ],
+            \"application_credential\": {
+                \"id\": \"$OS_APPLICATION_CREDENTIAL_ID\",
+                \"secret\": \"$OS_APPLICATION_CREDENTIAL_SECRET\"
+            }
+        }
+    }
+}" \
+ "$KEYSTONE_ENDPOINT/auth/tokens" | \
+        python3 -c "import json; import sys; data=json.load(sys.stdin);
+for a in data['token']['catalog']: 
+  for b in a['endpoints']: 
+    if b['interface']=='public': 
+      print(b['url'])")"
+
+#modify endpoints for curl query
+ALL_ENDPOINTS="$(echo $ALL_ENDPOINTS|tr " " "\n"|\
+                sed 's/:13005\/.*/:13005\//g'|\
+                sed 's/:13004\/.*/:13004\//g'|\
+                sed 's/:13776\/v2\/.*/:13776\/v2\//g'|\
+                sed 's/:13776\/v3\/.*/:13776\/v3\//g'|\
+                sed 's/:13786\/v1\/.*/:13786\/v1\//g'|\
+                sed 's/:13786\/v2\/.*/:13786\/v2\//g')"
 
 #check endpoints by curl
 for i in $ALL_ENDPOINTS
