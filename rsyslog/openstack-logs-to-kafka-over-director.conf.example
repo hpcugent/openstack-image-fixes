@@ -47,13 +47,9 @@ ruleset(name="kafka-logging") {
              queue.type="linkedlist"
              queue.size="4000"
              queue.dequeuebatchsize="200"
-#             queue.saveOnShutdown="on"
              action.resumeRetryCount="-1"
              keepAlive="on"
              target="<director_fqdn>" 
              port="514" 
              protocol="tcp")
 }
-
-#$DebugFile /var/log/rsyslog.debug
-#$DebugLevel 2
