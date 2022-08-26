@@ -16,7 +16,6 @@ copy collectd/configrc-example into colectd/configrc and change following values
 3. Edit rest of the configrc values, HEAT_JSON variable described in next step:
   KEYSTONE_ENDPOINT
   HOSTNAME_TO_RUN
-  ALL_ENDPOINTS
   HEAT_ENDPOINT
 
 4. For collectd functional tests alter collectd/heat-template.yaml and change following default parameters:
@@ -38,8 +37,16 @@ Run "openstack -vvvvv stack create --dry-run --timeout 30 --enable-rollback  -t 
 Within openstack client output look for dry-run request "REQ:" and "preview" within URI. Copy JSON after "-d" parameter.
 Make sure stack can be built, you can run the command without "--dry-run" parameter.
 
-5. Redeploy RHOSP 16
+5. for rsyslog kafka logging over director copy config example and change "<director_fqdn>" and "<cloud_url>"
 
-6. Verify that you can see new metrics in prometheus (STF), look for "collectd_endpoints_commands_total" and "collectd_heat_commands_total":
+  cp rsyslog/openstack-logs-to-kafka-over-director.conf.example rsyslog/openstack-logs-to-kafka-over-director.conf
+
+  edit rsyslog/openstack-logs-to-kafka-over-director.conf:
+    for swirlix replace <direcor_fqdn> with director00.ctlplane.swirlix.over and <cloud_url> with cloudt1.private.ugent.be
+    for munna replace <direcor_fqdn> with director10.ctlplane.munna.over and <cloud_url> with cloud.vscentrum.be
+
+6. Redeploy RHOSP 16
+
+7. Verify that you can see new metrics in prometheus (STF), look for "collectd_endpoints_commands_total" and "collectd_heat_commands_total":
 
 Value different than 0 means there is an issue with endpoint/functional tests
