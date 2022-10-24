@@ -44,7 +44,7 @@ resources:
     properties:
       handle: {get_resource: wait_handle}
       count: 2
-      timeout: 600
+      timeout: 900
 
   wait_handle:
     type: OS::Heat::WaitConditionHandle
