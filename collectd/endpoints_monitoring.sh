@@ -69,7 +69,8 @@ ALL_ENDPOINTS="$(echo "$ALL_ENDPOINTS"|tr " " "\n"|\
                 sed 's/:13776\/v2\/.*/:13776\/v2\//g'|\
                 sed 's/:13776\/v3\/.*/:13776\/v3\//g'|\
                 sed 's/:13786\/v1\/.*/:13786\/v1\//g'|\
-                sed 's/:13786\/v2\/.*/:13786\/v2\//g')"
+                sed 's/:13786\/v2\/.*/:13786\/v2\//g'|\
+                sed 's/:13808\/swift\/v1\/.*/:13808\/swift\/healthcheck/g')"
 
 #check endpoints by curl
 for i in $ALL_ENDPOINTS
