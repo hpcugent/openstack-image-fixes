@@ -17,3 +17,8 @@ export CEPH_DASHBOARD_USER="monitoring"
 export CEPH_DASHBOARD_PASS="<password>"
 
 export CEPH_DASHBOARD_IP_PORT="10.128.8.165:8444"
+
+#below SSL cert check for expiration witin number of seconds, use space separated "<domain>:<port> <domain>:<port"> entry for SSL_ENDPOINTS_TO_CHECK
+export SSL_ENDPOINTS_TO_CHECK="cloudt1.private.ugent.be:13000"
+##604800sec = 7days
+export SSL_EXPIRATION_IN_NUMBER_OF_SECONDS_CHECK="604800"
