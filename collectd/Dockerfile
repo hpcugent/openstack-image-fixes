@@ -4,4 +4,5 @@ USER "root"
 COPY endpoints_monitoring.sh /opt/
 COPY functional_tests.sh /opt/
 COPY ceph_health_monitor.sh /opt/
+COPY ssl_monitoring.sh /opt/
 COPY configrc /opt/
