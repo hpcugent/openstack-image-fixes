@@ -42,7 +42,13 @@ template (name="rsyslog-record" type="list"
 }
 
 ruleset(name="kafka-logging") {
-      action(type="omfwd" 
+    if re_match($msg, "DEBUG") 
+    then {
+         stop
+         }
+    else
+         {
+         action(type="omfwd" 
              template="rsyslog-record"
              queue.type="linkedlist"
              queue.size="4000"
@@ -52,4 +58,9 @@ ruleset(name="kafka-logging") {
              target="<director_fqdn>" 
              port="514" 
              protocol="tcp")
+         }
 }
+
+#$DebugFile /var/log/rsyslog.debug
+#$DebugLevel 2
+
